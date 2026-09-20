@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMS Titanic: Executive Demographic & Survival Intelligence</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#0B1325',
+                            800: '#111C35',
+                            700: '#1A2942',
+                            600: '#243757',
+                        },
+                        gold: {
+                            400: '#F3E5AB',
+                            500: '#D4AF37',
+                            600: '#AA820A',
+                        },
+                        teal: {
+                            400: '#2DD4BF',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050B14;
+            color: #E2E8F0;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: rgba(17, 28, 53, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(13, 148, 136, 0.15);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF5C0 0%, #D4AF37 50%, #996B00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .teal-gradient-text {
+            background: linear-gradient(135deg, #99F6E4 0%, #2DD4BF 50%, #0D9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Slide Transition Management */
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.98) translateY(10px);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding: 2.5rem 3.5rem;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+            z-index: 10;
+        }
+
+        /* Chart Animations */
+        .bar-animate {
+            transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Custom Scrollbar for drawer */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(11, 19, 37, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #243757;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between select-none bg-radial-gradient">
+
+    <!-- Top Navigation & Progress Bar -->
+    <header class="relative z-30 flex items-center justify-between px-8 py-4 border-b border-gray-800/60 bg-navy-900/80 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-ship text-gold-500 text-xl"></i>
+            <span class="font-serif tracking-widest text-sm font-bold text-gray-200 uppercase">Executive Intelligence</span>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <span id="slide-indicator" class="font-mono text-xs text-gold-400 bg-navy-800 px-3 py-1.5 rounded-full border border-gold-500/20">
+                SLIDE 1 / 6
+            </span>
+            <button id="overview-btn" class="text-xs text-gray-400 hover:text-gold-400 transition flex items-center gap-2 bg-navy-800/80 px-3 py-1.5 rounded-lg border border-gray-700 hover:border-gold-500/40">
+                <i class="fa-solid fa-border-all"></i> Slides
+            </button>
+        </div>
+
+        <!-- Top Progress Bar -->
+        <div class="absolute bottom-0 left-0 h-[2px] bg-navy-700 w-full">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-gold-500 via-teal-400 to-gold-400 transition-all duration-300 w-1/6"></div>
+        </div>
+    </header>
+
+    <!-- Slide Canvas Area -->
+    <main class="relative flex-1 w-full max-w-7xl mx-auto my-auto h-[calc(100vh-140px)] flex items-center justify-center">
+
+        <!-- SLIDE 1: Title Slide -->
+        <section class="slide active" id="slide-1">
+            <div class="m-auto w-full max-w-4xl text-center flex flex-col items-center">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-gold-500/30 text-gold-400 text-xs font-mono uppercase tracking-widest mb-8">
+                    <i class="fa-solid fa-chart-line text-xs"></i> Power BI & Advanced Analytics Portfolio
+                </div>
+                
+                <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide leading-tight mb-6 gold-gradient-text">
+                    RMS TITANIC
+                </h1>
+                <p class="text-xl md:text-2xl font-light text-slate-300 tracking-wide max-w-2xl mb-12">
+                    Executive Demographic & Survival Intelligence Report
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl glass-card p-6 rounded-2xl border border-gray-800">
+                    <div class="text-center md:text-left border-b md:border-b-0 md:border-r border-gray-800 pb-4 md:pb-0 md:pr-4">
+                        <p class="text-xs font-mono uppercase text-gray-500 mb-1">Author</p>
+                        <p class="text-sm font-semibold text-slate-200">Senior Data Analyst</p>
+                    </div>
+                    <div class="text-center md:text-left border-b md:border-b-0 md:border-r border-gray-800 pb-4 md:pb-0 md:pr-4">
+                        <p class="text-xs font-mono uppercase text-gray-500 mb-1">Dataset</p>
+                        <p class="text-sm font-semibold text-slate-200">891 Passengers (Sample)</p>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <p class="text-xs font-mono uppercase text-gray-500 mb-1">Technology</p>
+                        <p class="text-sm font-semibold text-teal-400">Power BI / DAX / Python</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: Executive Summary Metrics -->
+        <section class="slide" id="slide-2">
+            <div class="mb-6">
+                <span class="text-xs font-mono uppercase text-teal-400 tracking-wider">Overview</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-100 mt-1">Executive Summary & High-Level KPIs</h2>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Metric 1 -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center text-gray-400 mb-2">
+                            <span class="text-xs font-mono uppercase">Total Analyzed</span>
+                            <i class="fa-solid fa-users text-gold-500/80"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-slate-100 font-mono">891</div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-xs text-gray-400">
+                        Primary passenger manifest dataset
+                    </div>
+                </div>
+
+                <!-- Metric 2 -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center text-gray-400 mb-2">
+                            <span class="text-xs font-mono uppercase">Overall Survival</span>
+                            <i class="fa-solid fa-life-ring text-teal-400"></i>
+                        </div>
+                        <div class="text-4xl font-bold teal-gradient-text font-mono">38.4%</div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-xs text-gray-400">
+                        342 Survived vs 549 Deceased
+                    </div>
+                </div>
+
+                <!-- Metric 3 -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center text-gray-400 mb-2">
+                            <span class="text-xs font-mono uppercase">Female Survival</span>
+                            <i class="fa-solid fa-venus text-pink-400"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-pink-300 font-mono">74.2%</div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-xs text-gray-400">
+                        233 out of 314 female passengers
+                    </div>
+                </div>
+
+                <!-- Metric 4 -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center text-gray-400 mb-2">
+                            <span class="text-xs font-mono uppercase">Avg Fare Paid</span>
+                            <i class="fa-solid fa-sack-dollar text-gold-400"></i>
+                        </div>
+                        <div class="text-4xl font-bold gold-gradient-text font-mono">$32.20</div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-xs text-gray-400">
+                        Ranging from $0 to $512.33
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight Box -->
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-l-gold-500 flex items-start gap-4 mt-auto">
+                <i class="fa-solid fa-circle-info text-gold-400 text-xl mt-1"></i>
+                <div>
+                    <h4 class="font-semibold text-slate-200 text-sm mb-1">Executive Takeaway</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        The data highlights significant survival disparity driven primarily by <span class="text-teal-400 font-semibold">Gender</span> and <span class="text-gold-400 font-semibold">Socioeconomic Class</span>. Safety protocols ("Women and children first") and proximity to lifeboats (1st class cabin locations) strongly dictated outcome probabilities.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: Survival Analysis by Gender -->
+        <section class="slide" id="slide-3">
+            <div class="mb-6">
+                <span class="text-xs font-mono uppercase text-pink-400 tracking-wider">Demographic Breakdown</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-100 mt-1">Gender Survival Disparity</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
+                <!-- Visual Bars -->
+                <div class="lg:col-span-7 glass-card p-8 rounded-2xl space-y-8">
+                    <!-- Female Bar -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                                <i class="fa-solid fa-venus text-pink-400"></i> Female Passengers (314 Total)
+                            </span>
+                            <span class="text-sm font-mono font-bold text-pink-300">74.2% Survived</span>
+                        </div>
+                        <div class="h-6 w-full bg-navy-900 rounded-full overflow-hidden p-1 border border-gray-800">
+                            <div class="h-full bg-gradient-to-r from-pink-500 to-rose-400 rounded-full bar-animate" style="width: 74.2%;"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400 mt-1.5 font-mono">
+                            <span>233 Survived</span>
+                            <span>81 Deceased</span>
+                        </div>
+                    </div>
+
+                    <!-- Male Bar -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                                <i class="fa-solid fa-mars text-blue-400"></i> Male Passengers (577 Total)
+                            </span>
+                            <span class="text-sm font-mono font-bold text-blue-400">18.9% Survived</span>
+                        </div>
+                        <div class="h-6 w-full bg-navy-900 rounded-full overflow-hidden p-1 border border-gray-800">
+                            <div class="h-full bg-gradient-to-r from-blue-600 to-teal-400 rounded-full bar-animate" style="width: 18.9%;"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400 mt-1.5 font-mono">
+                            <span>109 Survived</span>
+                            <span>468 Deceased</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights Cards -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="glass-card p-5 rounded-2xl border-l-4 border-l-pink-400">
+                        <h4 class="text-sm font-semibold text-slate-200 mb-1">3.9x Survival Odds for Women</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Females were nearly 4 times more likely to survive than males due to strict maritime evacuation procedures prioritizing female passengers.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl border-l-4 border-l-blue-400">
+                        <h4 class="text-sm font-semibold text-slate-200 mb-1">High Male Casualty Rate</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Over 81% of male passengers perished, representing the vast majority of total casualties aboard the vessel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: Passenger Class Impact -->
+        <section class="slide" id="slide-4">
+            <div class="mb-6">
+                <span class="text-xs font-mono uppercase text-gold-400 tracking-wider">Socioeconomic Analysis</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-100 mt-1">Survival Rate by Passenger Class</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-auto">
+                <!-- First Class -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between border-t-4 border-t-gold-400">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-mono font-bold text-gold-400 uppercase">1st Class</span>
+                            <span class="text-xs bg-gold-500/10 text-gold-400 px-2 py-1 rounded border border-gold-500/20 font-mono">Avg Fare $84.15</span>
+                        </div>
+                        <div class="text-4xl font-bold text-slate-100 font-mono mb-2">63.0%</div>
+                        <p class="text-xs text-gray-400">136 Survived / 80 Deceased</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-800">
+                        <div class="h-2 w-full bg-navy-900 rounded-full overflow-hidden">
+                            <div class="h-full bg-gold-400 rounded-full bar-animate" style="width: 63%;"></div>
+                        </div>
+                        <p class="text-xs text-gray-300 mt-3">Direct access to upper boat decks significantly increased escape probability.</p>
+                    </div>
+                </div>
+
+                <!-- Second Class -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between border-t-4 border-t-teal-400">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-mono font-bold text-teal-400 uppercase">2nd Class</span>
+                            <span class="text-xs bg-teal-500/10 text-teal-400 px-2 py-1 rounded border border-teal-500/20 font-mono">Avg Fare $20.66</span>
+                        </div>
+                        <div class="text-4xl font-bold text-slate-100 font-mono mb-2">47.3%</div>
+                        <p class="text-xs text-gray-400">87 Survived / 97 Deceased</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-800">
+                        <div class="h-2 w-full bg-navy-900 rounded-full overflow-hidden">
+                            <div class="h-full bg-teal-400 rounded-full bar-animate" style="width: 47.3%;"></div>
+                        </div>
+                        <p class="text-xs text-gray-300 mt-3">Moderate survival rate; mid-deck positioning provided fair access to lifeboats.</p>
+                    </div>
+                </div>
+
+                <!-- Third Class -->
+                <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between border-t-4 border-t-slate-500">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-mono font-bold text-gray-400 uppercase">3rd Class</span>
+                            <span class="text-xs bg-gray-500/10 text-gray-400 px-2 py-1 rounded border border-gray-500/20 font-mono">Avg Fare $13.68</span>
+                        </div>
+                        <div class="text-4xl font-bold text-slate-100 font-mono mb-2">24.2%</div>
+                        <p class="text-xs text-gray-400">119 Survived / 372 Deceased</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-800">
+                        <div class="h-2 w-full bg-navy-900 rounded-full overflow-hidden">
+                            <div class="h-full bg-gray-500 rounded-full bar-animate" style="width: 24.2%;"></div>
+                        </div>
+                        <p class="text-xs text-gray-300 mt-3">Severe casualties due to deep cabin placement and complex deck navigation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: Port of Embarkation -->
+        <section class="slide" id="slide-5">
+            <div class="mb-6">
+                <span class="text-xs font-mono uppercase text-teal-400 tracking-wider">Geographic Factors</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-100 mt-1">Port of Embarkation Insights</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 my-auto">
+                <div class="glass-card p-6 rounded-2xl border border-teal-500/20 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-bold text-lg text-slate-200">Cherbourg (C)</h3>
+                            <span class="text-xs font-mono bg-teal-500/10 text-teal-300 px-2.5 py-1 rounded-full">168 Passengers</span>
+                        </div>
+                        <div class="text-3xl font-bold teal-gradient-text font-mono mb-2">55.4%</div>
+                        <p class="text-xs text-gray-400 mb-4">Survival Rate</p>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Higher percentage of 1st class passengers boarded at Cherbourg, driving significantly higher average survival rates.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-3 border-t border-gray-800 text-xs font-mono text-gray-400">
+                        Avg Fare: $59.95
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-bold text-lg text-slate-200">Queenstown (Q)</h3>
+                            <span class="text-xs font-mono bg-gray-800 text-gray-300 px-2.5 py-1 rounded-full">77 Passengers</span>
+                        </div>
+                        <div class="text-3xl font-bold text-slate-200 font-mono mb-2">39.0%</div>
+                        <p class="text-xs text-gray-400 mb-4">Survival Rate</p>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Primarily 3rd class emigrants. Higher survival than 3rd class baseline due to a larger proportion of female travelers.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-3 border-t border-gray-800 text-xs font-mono text-gray-400">
+                        Avg Fare: $13.28
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-bold text-lg text-slate-200">Southampton (S)</h3>
+                            <span class="text-xs font-mono bg-gray-800 text-gray-300 px-2.5 py-1 rounded-full">644 Passengers</span>
+                        </div>
+                        <div class="text-3xl font-bold text-slate-200 font-mono mb-2">33.7%</div>
+                        <p class="text-xs text-gray-400 mb-4">Survival Rate</p>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Primary port of departure carrying the majority of passengers across all classes, reflecting overall dataset averages.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-3 border-t border-gray-800 text-xs font-mono text-gray-400">
+                        Avg Fare: $27.07
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: Recommendations & Modeling Insights -->
+        <section class="slide" id="slide-6">
+            <div class="mb-6">
+                <span class="text-xs font-mono uppercase text-gold-400 tracking-wider">Executive Conclusion</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-100 mt-1">Data Modeling & Predictive Recommendations</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto">
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-gold-500">
+                    <div class="flex items-center gap-3 text-gold-400 font-bold text-base">
+                        <i class="fa-solid fa-gears"></i> Feature Engineering Priorities
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Combine <code class="font-mono text-gold-300 bg-navy-900 px-1 py-0.5 rounded">SibSp</code> and <code class="font-mono text-gold-300 bg-navy-900 px-1 py-0.5 rounded">Parch</code> into a unified <code class="font-mono text-gold-300 bg-navy-900 px-1 py-0.5 rounded">FamilySize</code> metric. Solo passengers had significantly lower survival rates than small families (2-4 members).
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-teal-400">
+                    <div class="flex items-center gap-3 text-teal-400 font-bold text-base">
+                        <i class="fa-solid fa-code-branch"></i> Title Extraction from Names
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Extract honorifics (Mr, Mrs, Miss, Master) to capture proxy age and marital status interactions, improving predictive classification accuracy in machine learning models.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-blue-400">
+                    <div class="flex items-center gap-3 text-blue-400 font-bold text-base">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Missing Value Strategy
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Impute missing <code class="font-mono text-blue-300 bg-navy-900 px-1 py-0.5 rounded">Age</code> values based on <code class="font-mono text-blue-300 bg-navy-900 px-1 py-0.5 rounded">Pclass</code> and Title medians rather than overall dataset mean to preserve class-based distribution.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-purple-400">
+                    <div class="flex items-center gap-3 text-purple-400 font-bold text-base">
+                        <i class="fa-solid fa-chart-pie"></i> Business Value Delivered
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Provides a clean DAX measure foundation for Power BI reporting dashboard, enabling drill-through capabilities across age cohorts and passenger classes.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Slide Overview Drawer Modal -->
+    <div id="overview-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-lg opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-8">
+        <div class="w-full max-w-5xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-serif text-2xl font-bold text-gold-400">Slide Directory</h3>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="overview-grid">
+                <!-- Dynamic slide thumbnails populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Controls Footer -->
+    <footer class="relative z-30 flex items-center justify-between px-8 py-4 border-t border-gray-800/60 bg-navy-900/80 backdrop-blur-md">
+        <div class="text-xs text-gray-500 font-mono">
+            Use <kbd class="px-1.5 py-0.5 bg-navy-800 border border-gray-700 rounded text-gray-300">←</kbd> <kbd class="px-1.5 py-0.5 bg-navy-800 border border-gray-700 rounded text-gray-300">→</kbd> or <kbd class="px-1.5 py-0.5 bg-navy-800 border border-gray-700 rounded text-gray-300">Space</kbd> to Navigate
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="prev-btn" class="px-4 py-2 text-xs font-semibold rounded-lg bg-navy-800 border border-gray-700 hover:border-gold-500/50 hover:text-gold-400 transition flex items-center gap-2">
+                <i class="fa-solid fa-chevron-left"></i> Previous
+            </button>
+            <button id="next-btn" class="px-4 py-2 text-xs font-semibold rounded-lg bg-gold-500 text-navy-900 hover:bg-gold-400 transition flex items-center gap-2 font-bold">
+                Next <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <button id="fullscreen-btn" class="text-xs text-gray-400 hover:text-gold-400 transition" title="Toggle Fullscreen">
+            <i class="fa-solid fa-expand text-base"></i>
+        </button>
+    </footer>
+
+    <!-- Embedded JavaScript for Navigation Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const totalSlides = slides.length;
+            let currentSlide = 0;
+
+            const slideIndicator = document.getElementById('slide-indicator');
+            const progressBar = document.getElementById('progress-bar');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const overviewBtn = document.getElementById('overview-btn');
+            const overviewModal = document.getElementById('overview-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const overviewGrid = document.getElementById('overview-grid');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+            // Slide Titles for Modal Directory
+            const slideTitles = [
+                "Title & Project Metadata",
+                "Executive Summary KPIs",
+                "Gender Survival Disparity",
+                "Passenger Class Impact",
+                "Port of Embarkation",
+                "Strategic Data Recommendations"
+            ];
+
+            // Render Overview Cards
+            slideTitles.forEach((title, idx) => {
+                const card = document.createElement('div');
+                card.className = `glass-card p-4 rounded-xl border cursor-pointer hover:border-gold-500 transition ${idx === currentSlide ? 'border-gold-500 bg-gold-500/10' : 'border-gray-800'}`;
+                card.innerHTML = `
+                    <div class="text-xs font-mono text-gold-400 mb-1">SLIDE ${idx + 1}</div>
+                    <div class="text-sm font-semibold text-slate-200">${title}</div>
+                `;
+                card.addEventListener('click', () => {
+                    goToSlide(idx);
+                    toggleModal(false);
+                });
+                overviewGrid.appendChild(card);
+            });
+
+            function updateSlideUI() {
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === currentSlide);
+                });
+
+                // Update Header Status
+                slideIndicator.textContent = `SLIDE ${currentSlide + 1} / ${totalSlides}`;
+                progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+
+                // Control Button States
+                prevBtn.disabled = currentSlide === 0;
+                prevBtn.classList.toggle('opacity-50', currentSlide === 0);
+                
+                if (currentSlide === totalSlides - 1) {
+                    nextBtn.innerHTML = 'Finish <i class="fa-solid fa-check"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next <i class="fa-solid fa-chevron-right"></i>';
+                }
+
+                // Refresh modal selection
+                Array.from(overviewGrid.children).forEach((child, idx) => {
+                    child.classList.toggle('border-gold-500', idx === currentSlide);
+                    child.classList.toggle('bg-gold-500/10', idx === currentSlide);
+                });
+            }
+
+            function goToSlide(index) {
+                if (index >= 0 && index < totalSlides) {
+                    currentSlide = index;
+                    updateSlideUI();
+                }
+            }
+
+            function nextSlide() {
+                if (currentSlide < totalSlides - 1) {
+                    goToSlide(currentSlide + 1);
+                }
+            }
+
+            function prevSlide() {
+                if (currentSlide > 0) {
+                    goToSlide(currentSlide - 1);
+                }
+            }
+
+            function toggleModal(show) {
+                overviewModal.classList.toggle('opacity-0', !show);
+                overviewModal.classList.toggle('pointer-events-none', !show);
+            }
+
+            // Keyboard Listeners
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                } else if (e.key === 'Escape') {
+                    toggleModal(false);
+                }
+            });
+
+            // Button Event Listeners
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            overviewBtn.addEventListener('click', () => toggleModal(true));
+            closeModalBtn.addEventListener('click', () => toggleModal(false));
+
+            // Fullscreen Toggle
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            // Initialize
+            updateSlideUI();
+        });
+    </script>
+</body>
+</html>
